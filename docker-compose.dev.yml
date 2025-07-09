@@ -1,0 +1,71 @@
+# Docker Compose para desenvolvimento
+version: '3.8'
+
+services:
+  # Banco de dados MySQL
+  database:
+    image: mysql:8.0
+    container_name: dashboard-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: dashboard_analytics
+      MYSQL_USER: dashboard_user
+      MYSQL_PASSWORD: dashboard_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  # Backend em modo desenvolvimento
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    container_name: dashboard-backend-dev
+    depends_on:
+      - database
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: mysql://dashboard_user:dashboard_password@database:3306/dashboard_analytics
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app/backend
+      - /app/backend/node_modules
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  # Frontend em modo desenvolvimento
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile.dev
+    container_name: dashboard-frontend-dev
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+volumes:
+  mysql_dev_data:
+
+networks:
+  dashboard-network:
+    driver: bridge

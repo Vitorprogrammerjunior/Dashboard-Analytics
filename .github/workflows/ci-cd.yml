@@ -1,0 +1,132 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Job para testar o backend
+  backend-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: dashboard_analytics_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Run backend linting
+      run: |
+        cd backend
+        npm run lint || true
+
+    - name: Run backend tests
+      run: |
+        cd backend
+        npm test || true
+      env:
+        NODE_ENV: test
+        DATABASE_URL: mysql://root:password@localhost:3306/dashboard_analytics_test
+
+  # Job para testar o frontend
+  frontend-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Run frontend linting
+      run: |
+        cd frontend
+        npm run lint
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+      env:
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+
+  # Job para verificar segurança
+  security-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run security audit - Backend
+      run: |
+        cd backend
+        npm audit --audit-level=moderate || true
+
+    - name: Run security audit - Frontend
+      run: |
+        cd frontend
+        npm audit --audit-level=moderate || true
+
+  # Job para deploy (apenas na branch main)
+  deploy:
+    needs: [backend-test, frontend-test, security-check]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        cd backend && npm ci
+        cd ../frontend && npm ci
+
+    - name: Build applications
+      run: |
+        cd frontend && npm run build
+      env:
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+    # Adicione aqui steps para deploy em sua plataforma preferida
+    # Exemplo: Vercel, Netlify, AWS, etc.
+
+    - name: Deploy to production
+      run: |
+        echo "Deploy steps would go here"
+        # Exemplo para Vercel:
+        # npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}

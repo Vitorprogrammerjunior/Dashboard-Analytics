@@ -1,6 +1,24 @@
-# Dashboard Analítico em Tempo Real
+# 📊 Dashboard Analítico em Tempo Real
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Node.js Version](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![Next.js Version](https://img.shields.io/badge/Next.js-15-blue.svg)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
 
 Sistema completo de dashboard analítico com atualizações em tempo real usando Next.js no frontend e Node.js + Express + Socket.io no backend.
+
+![Dashboard Preview](docs/images/dashboard-preview.png)
+
+## ✨ Funcionalidades
+
+- 📈 **Métricas em Tempo Real** - Visualização instantânea de dados
+- 🎨 **Interface Moderna** - Design limpo e responsivo com Tailwind CSS
+- 📊 **Múltiplos Gráficos** - Linhas, áreas e gráficos minimalistas
+- ⚙️ **Configurável** - Personalize cores, intervalos e métricas
+- 🔄 **Socket.io** - Comunicação bidirecional em tempo real
+- 🗄️ **MySQL** - Banco de dados robusto e escalável
+- 📱 **Responsivo** - Funciona perfeitamente em mobile e desktop
+- 🚀 **Performance** - Otimizado para alta performance
 
 ## 📁 Estrutura do Projeto
 
@@ -21,27 +39,95 @@ Dashboard-Análitico/
 └── README.md
 ```
 
-## 🚀 Como Executar
+## 🚀 Início Rápido
 
-### 1. Backend
+### Pré-requisitos
 
+- [Node.js](https://nodejs.org/) (versão 18 ou superior)
+- [MySQL](https://dev.mysql.com/downloads/mysql/) (versão 8.0 ou superior)
+- [Git](https://git-scm.com/)
+
+### Instalação Automática
+
+**Windows:**
+```powershell
+# Clone o repositório
+git clone https://github.com/seu-usuario/Dashboard-Analitico.git
+cd Dashboard-Analitico
+
+# Execute o script de instalação
+.\install.ps1
+```
+
+**Linux/macOS:**
 ```bash
+# Clone o repositório
+git clone https://github.com/seu-usuario/Dashboard-Analitico.git
+cd Dashboard-Analitico
+
+# Execute o script de instalação
+chmod +x install.sh
+./install.sh
+```
+
+### Instalação Manual
+
+1. **Clone o repositório**
+```bash
+git clone https://github.com/seu-usuario/Dashboard-Analitico.git
+cd Dashboard-Analitico
+```
+
+2. **Instale as dependências**
+```bash
+# Backend
 cd backend
 npm install
-npm run dev
-```
 
-O servidor estará rodando em `http://localhost:4000`
-
-### 2. Frontend
-
-```bash
-cd frontend
+# Frontend
+cd ../frontend
 npm install
-npm run dev
 ```
 
-O frontend estará rodando em `http://localhost:3000`
+3. **Configure as variáveis de ambiente**
+```bash
+# Backend
+cp backend/.env.example backend/.env
+# Edite backend/.env com suas configurações
+
+# Frontend
+cp frontend/.env.local.example frontend/.env.local
+# Edite frontend/.env.local com suas configurações
+```
+
+4. **Configure o banco de dados**
+```bash
+# Windows
+.\setup-mysql.bat
+
+# Linux/macOS
+./setup-mysql.sh
+```
+
+5. **Inicie o projeto**
+```bash
+# Método 1: Script automático
+.\start.bat  # Windows
+./start.sh   # Linux/macOS
+
+# Método 2: Manual
+# Terminal 1 - Backend
+cd backend && npm run dev
+
+# Terminal 2 - Frontend
+cd frontend && npm run dev
+```
+
+### Acessos
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:4000
+- **Configurações**: http://localhost:3000/settings
 
 ## 🔧 Configuração
 
@@ -186,14 +272,53 @@ Por padrão, o sistema inclui estas métricas mock:
 5. **Adicionar métricas personalizadas**
 6. **Implementar notificações**
 
-## 🤝 Contribuição
+## 🤝 Contribuindo
+
+Contribuições são muito bem-vindas! Veja [CONTRIBUTING.md](CONTRIBUTING.md) para detalhes sobre como contribuir.
+
+### Passos Rápidos:
 
 1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
 ## 📄 Licença
 
-Este projeto está sob a licença ISC.
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 🙏 Agradecimentos
+
+- [Next.js](https://nextjs.org/) pela framework incrível
+- [Socket.io](https://socket.io/) pela comunicação em tempo real
+- [Recharts](https://recharts.org/) pelos gráficos belíssimos
+- [Tailwind CSS](https://tailwindcss.com/) pelo styling moderno
+- [Lucide](https://lucide.dev/) pelos ícones elegantes
+
+## 📞 Suporte
+
+Se você tiver problemas ou perguntas:
+
+1. Verifique a [documentação](README.md)
+2. Procure em [Issues existentes](https://github.com/seu-usuario/Dashboard-Analitico/issues)
+3. Abra uma [nova issue](https://github.com/seu-usuario/Dashboard-Analitico/issues/new)
+
+## 🗺️ Roadmap
+
+- [ ] Autenticação de usuários
+- [ ] Testes automatizados
+- [ ] Docker containerization
+- [ ] Múltiplos dashboards
+- [ ] Alertas e notificações
+- [ ] Exportação de dados
+- [ ] Modo escuro
+- [ ] PWA (Progressive Web App)
+
+Veja o [CHANGELOG.md](CHANGELOG.md) para histórico de versões.
+
+---
+
+<p align="center">
+  Feito com ❤️ por <a href="https://github.com/seu-usuario">Seu Nome</a>
+</p>

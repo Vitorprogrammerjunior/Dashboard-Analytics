@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Banco de dados MySQL
+  database:
+    image: mysql:8.0
+    container_name: dashboard-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: dashboard_analytics
+      MYSQL_USER: dashboard_user
+      MYSQL_PASSWORD: dashboard_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: dashboard-backend
+    depends_on:
+      - database
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: mysql://dashboard_user:dashboard_password@database:3306/dashboard_analytics
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "4000:4000"
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: dashboard-frontend
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  dashboard-network:
+    driver: bridge
